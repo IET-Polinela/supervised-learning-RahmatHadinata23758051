@@ -1,12 +1,11 @@
-import pandas as pd
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
-# Load dataset (disesuaikan dengan dataset tanpa outlier)
-df = pd.read_csv("dataset_without_outliers.csv")  
+# Load dataset tanpa outlier
+df = pd.read_csv("dataset_without_outliers.csv")
 
 # Pilih hanya kolom numerik untuk dilakukan scaling
 numerical_cols = df.select_dtypes(include=[np.number]).columns
@@ -22,20 +21,9 @@ minmax_scaler = MinMaxScaler()
 df_standard_scaled = pd.DataFrame(standard_scaler.fit_transform(df[numerical_cols]), columns=numerical_cols)
 df_minmax_scaled = pd.DataFrame(minmax_scaler.fit_transform(df[numerical_cols]), columns=numerical_cols)
 
-# Tentukan metode scaling terbaik berdasarkan distribusi data
-skewness = df[numerical_cols].skew().mean()
-kurtosis = df[numerical_cols].kurtosis().mean()
-
-if abs(skewness) < 1 and abs(kurtosis - 3) < 1:  
-    best_scaler = "StandardScaler"
-    df_best_scaled = df_standard_scaled
-else:
-    best_scaler = "MinMaxScaler"
-    df_best_scaled = df_minmax_scaled
-
-# Simpan dataset dengan metode terbaik
-output_file = f"dataset_scaled_{best_scaler}.csv"
-df_best_scaled.to_csv(output_file, index=False)
+# Simpan kedua dataset hasil scaling
+df_standard_scaled.to_csv("dataset_scaled_standard.csv", index=False)
+df_minmax_scaled.to_csv("dataset_scaled_MinMaxScaler.csv", index=False)
 
 # Plot histogram sebelum dan sesudah scaling
 fig, axes = plt.subplots(1, 3, figsize=(18, 5))
@@ -58,6 +46,6 @@ plt.tight_layout()
 plt.savefig("hasil_scaling_histogram.png", dpi=300)
 plt.show()
 
-# Print metode yang dipilih
-print(f"Metode Scaling yang dipilih: {best_scaler}")
-print(f"Dataset hasil scaling disimpan sebagai: {output_file}")
+# Print informasi
+print("Dataset hasil StandardScaler disimpan sebagai: dataset_standard_scaled.csv")
+print("Dataset hasil MinMaxScaler disimpan sebagai: dataset_minmax_scaled.csv")
